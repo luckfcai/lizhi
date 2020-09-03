@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width" />
-    <title>问答123系统</title>
+    <title>问答系统</title>
     <script type="text/javascript" src=" __STATIC__/vue.js/vue.min.js"></script>
     <script type="text/javascript" src=" __STATIC__/js/jquery.min.js"></script>
     <style>
@@ -39,6 +39,7 @@
             align-items: center;
             justify-content: center;
         }
+
 
         .flex {
             display: flex;
@@ -117,7 +118,7 @@
 
         .recommend {
             margin-top: 20px;
-            height: 100px;
+            min-height: 110px;
             border: solid 2px red;
             border-radius: 5px;
         }
@@ -127,17 +128,44 @@
             overflow: auto;
         }
         .other{
-            /* position: relative; */
+            position: relative;
             background: #fff;
-
             display: flex;
             flex-direction: column;
+            border: solid 2px red;
         }
         .url{
             width: 100%;
-            height: 20px;
-            border: solid 1px black;
-            margin: 2px;
+            height: 24px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            text-indent:1em;  
+        }
+        .url_check{
+            background: #009ef7;
+            color: #fff;
+        }
+        .column{
+            width: 74px;
+            height: 30px;
+            margin: 15px 10px;
+        }
+        .hits{
+            width: 100%;
+            height: 25px;
+            margin-left: 20px;
+            text-indent:2em;
+            display: flex;
+            align-items: center;
+        }
+        .hits_title{
+            width: 100%;
+            height: 25px;
+            margin-left: 20px;
+            font-weight: bolder;
+            display: flex;
+            align-items: center;
         }
     </style>
 </head>
@@ -151,13 +179,13 @@
         </div>
         <div class="head">
             <div class="logo" @click="back()">返回 </div>
-            <div class="logo" @click="dx()">LOGO</div>
-            <!-- <div class="logo">其他链接</div> -->
-            <div class="logo ">
+            <div class="logo">LOGO</div>
+            <div class="logo" @mouseenter="column_chekc()" v-if="column==1">其他链接</div>
+            <div class="column" @mouseleave="column_chekc()"  v-if="column==2">
                 <div class="other"> 
-                    <!-- <div class="url">其他链接</div> 
-                    <div class="url">其他链接</div> 
-                    <div class="url">其他链接</div>  -->
+                    <div class="url" :class="url_checkId == val.id && 'url_check'"  v-for="(val,index) in columnData" @click="location.href=val.url"  @mouseenter="url_check(val.id)">
+                        {{val.name}}
+                    </div> 
                 </div>
             </div>
         </div>
@@ -177,8 +205,13 @@
                 </div>
 
                 <div class="qt_view"> 其他 ：<input class="qt"> </div>
-                <div class="recommend flex">
-                    推荐
+                <div class="recommend">
+                    <div class="hits_title">
+                        热门推荐:
+                     </div>
+                    <div class="hits" v-for="(val,index) in hits"  @click="check(val)">
+                      {{index+1}}. {{val.name}}
+                    </div>
                 </div>
             </div>
 
@@ -186,7 +219,7 @@
                 <div class="title">结束语（答完了）：</div>
                 <div class="info">
                     <div class="question_checks">
-                        <div>  {{endText}}</div>
+                        <div> {{endText}}</div>
                     </div>
                 </div>
             </div>
@@ -211,7 +244,11 @@
                 val: '',
                 endText: '',
                 info: '',
+                column:1,
+                url_checkId:'',
                 msg: {:html_entity_decode($data) },
+                hits:{:html_entity_decode($hits) },
+                columnData: {:html_entity_decode($list) },
             },
             computed: {
                 list: function () {
@@ -241,12 +278,27 @@
                 }
             },
             methods: {
+                url_check: function(id){
+                    this.url_checkId = id
+                },
+                column_chekc: function (){
+                    this.column = this.column == 1 ? 2 :1;
+                },
                 //选中
                 check: function (val) {
                     this.pid = val.id;
                     this.val = val;
                     this.info = val.info;
                     this.result.push({ 'id': val.id, 'name': val.name, 'pid': val.pid });
+                    $.ajax({
+                        type: "post"
+                        , url: '__URL/index.php/index/columnEdit'
+                        , dataType: "JSON"
+                        , data: {
+                          'id':val.id,
+                          'hits':val.hits++
+                        }
+                    })
                 },
                 //后退 
                 back: function () {
@@ -257,29 +309,7 @@
                     }else{
                         this.pid = 0
                     }
-                },
-                dx: function() {
-                    $.ajax({
-                        type: "post"
-                        , url: 'http://api.feige.ee/SmsService/Send'
-                        , dataType: "JSON"
-                        , data: {
-                            'Account': '18617273784',
-                            'Pwd':'41c091107f489b4ffa0464b56',
-                            'Content':'您的验证码是：123',
-                            'Mobile':'18617273784',
-                            'SignId':'323798 '
-                        }
-                        , success: function (msg) {
-                            console.log(msg)
-                        }
-                        , error: function (e) {
-                            alert('通信失败')
-                        }
-                    })
-                }
-                 
-               
+                },   
             }
 
         })

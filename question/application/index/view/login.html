@@ -106,7 +106,6 @@
     <div id="box">
         <div class="head">
             <div class="logo">LOGO</div>
-            <!-- <div class="logo">去登陆</div> -->
             <div class="logo" @click="cut()">{{type=='login' ? '去注册' : '去登陆'}} </div>
         </div>
         <div class="login">
@@ -145,7 +144,6 @@
     </div>
 
     <script>
-        //register
         new Vue({
             el: "#box",
             data: {
@@ -168,6 +166,8 @@
                         'passworde': this.passworde
                     };
                     if(this.type =='register') {
+                    /*     conso.log(this.vercode);
+                        conso.log(this.code); */
                         if (!(this.code == this.vercode && this.vercode.length == 6)) {
                             alert('请输入正确的验证码');
                             return;
@@ -183,6 +183,7 @@
                         }
                         , success: function (msg) {
                             alert(msg.msg);
+                            msg.code == 200 && (location.href='__URL__/index.php/index');
                         }
                         , error: function (e) {
                             alert('服务器繁忙请稍后重试')
@@ -201,6 +202,7 @@
                         , success: function (msg) {
                             alert(msg.msg);
                             msg.code == 200 && (that.vercode = msg.data,that.getSecond());
+                           /*  console.log(that.vercode) */
                         }
                         , error: function (e) {
                             alert('服务器繁忙请稍后重试')

@@ -31,11 +31,11 @@ class Login extends Controller
             $validate = new AdminInfo(); 
 
             if ($validate->scene('login')->check($data)) {
-                $userInfo = examine('admin_info',$conition);
-                if ($userInfo) { 
-                    $userInfo['status'] == 0 && result($userInfo,0,'账号被禁用');
-                    Session::set('userInfo',$userInfo);
-                    result($userInfo,200,'登录成功');
+                $adminInfo = examine('admin_info',$conition);
+                if ($adminInfo) { 
+                    $adminInfo['status'] == 0 && result($adminInfo,0,'账号被禁用');
+                    Session::set('adminInfo',$adminInfo);
+                    result($adminInfo,200,'登录成功');
                 } else {
                     result($conition,0,'帐号不存在');
                 }
@@ -63,7 +63,7 @@ class Login extends Controller
      */
     public function administrationOut()
     {
-        Session::delete('userInfo');
+        Session::delete('adminInfo');
         header('Location:'.URL.'/administrationLogin');
         exit;
     }
