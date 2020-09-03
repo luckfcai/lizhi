@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+
+<head>
+    <meta charset="UTF-8">
+    <title>管理员添加</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+        content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <link rel="stylesheet" href="__STATIC__/css/font.css">
+    <link rel="stylesheet" href="__STATIC__/css/xadmin.css">
+    <script type="text/javascript" src="__STATIC__/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="__STATIC__/js/xadmin.js"></script>
+    <script type="text/javascript" src="__STATIC__/js/jquery.min.js"></script>
+</head>
+
+<body>
+    <div class="layui-fluid">
+        <div class="layui-row">
+            <form class="layui-form" lay-filter="form" >
+                <div class="layui-form-item">
+                    <label for="username" class="layui-form-label">
+                        <span class="x-red">*</span>昵称
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="nick_name" value="" name="nick_name" required="required"
+                            autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="L_pass" class="layui-form-label">
+                        <span class="x-red">*</span>密码
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="password"  id="password" name="password" required="required"
+                            lay-verify="password" autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">
+                        请控制在6到16个字符之间
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="L_repass" class="layui-form-label">
+                        <span class="x-red">*</span>确认密码
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="password" id="repassword"  name="repassword" lay-verify="repassword"
+                            autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="L_repass" class="layui-form-label"> </label>
+
+                    <input type="submit" class="layui-btn" lay-filter="add" lay-submit value="确定">
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        layui.use(['form', 'layer'], function () {
+            $ = layui.jquery;
+            var form = layui.form,
+            layer = layui.layer;
+            form.on('submit(add)', function (data) {
+                var addData = {
+                    'nick_name': data.field.nick_name,
+                    'password': data.field.password
+                } 
+                $.ajax({
+                    type: "post",
+                    url: "__URL__/index/adminadd",
+                    data: {
+                        'data':addData
+                    },
+                    dataType: "json",
+                    success: function (msg) {
+                        alert(msg.msg);
+                        if(msg.code === 200){
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.location.reload();
+                            parent.layer.close(index);
+                        }
+                    },
+                    error: function () {
+                        alert('服务器繁忙请稍后重试');
+                    }
+                })
+                return false;
+            });
+            form.verify({
+                password: [/^[a-zA-Z0-9_]{6,12}$/, '密码必须6到12位']
+                , repassword: function (value, item) {
+                    if ($('#password').val() != value) {
+                        return "两次密码不一致";
+                    }
+                }
+            });
+        });
+
+    </script>
+</body>
+
+</html>

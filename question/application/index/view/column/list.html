@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+    
+    <head>
+        <meta charset="UTF-8">
+        <title>栏目列表</title>
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+        <link rel="stylesheet" href="__STATIC__/css/font.css">
+        <link rel="stylesheet" href="__STATIC__/css/xadmin.css">
+        <script src="__STATIC__/lib/layui/layui.js" charset="utf-8"></script>
+        <script type="text/javascript" src="__STATIC__/js/xadmin.js"></script>
+        <script src="__STATIC__/js/jquery.min.3.5.1.js"></script>
+        <script src="__STATIC__/layui/layui.all.js"></script>
+        <script src="__STATIC__/layui/layui.js"></script>
+        <link rel="stylesheet" href="__STATIC__/layui/css/layui.css">
+        <script src="__STATIC__/vue.js/vue.min.js"></script>
+    </head>
+    <style>
+      .layui-table td,
+      .layui-table th {
+          min-width: 40px;
+      }
+  </style>
+<body>
+
+  <div class="x-nav">
+      <span class="layui-breadcrumb">
+          <a href="">首页</a>
+          <a href="">演示</a>
+          <a>
+              <cite>导航元素</cite></a>
+      </span>
+      <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+          onclick="location.reload()" title="刷新">
+          <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i>
+      </a>
+  </div>
+  <div class="layui-fluid">
+      <div class="layui-row layui-col-space15">
+          <div class="layui-col-md12" id="goodCate">
+              <div class="layui-card">
+                  <div class="layui-card-body ">
+                      <form class="layui-form layui-col-space5">
+                          <div class="layui-input-inline layui-show-xs-block"> </div>
+                          <div class="layui-input-inline layui-show-xs-block">
+                              <div class="layui-btn" onclick="add('添加一级栏目','columnadd','pid',0)" >
+                                  <i class="layui-icon"></i>添加一级栏目</div>
+                          </div>
+                      </form>
+ 
+                      <hr>
+                      <blockquote class="layui-elem-quote">
+                        有子类的前面有收缩图标<i class="layui-icon x-show" status='true'>&#xe623;</i></blockquote>
+                  </div>
+                  <div class="layui-card-header">
+     
+                  </div>
+
+                  <div class="layui-card-body ">
+                      <table class="layui-table layui-form" id="tb" lay-filter="tb">
+                          <thead>
+                              <tr>
+                                  <th width="3%">ID</th>
+                                  <th width="16%">栏目名</th>
+                                  <th width="8%">图片</th>
+                                  <th width="8%"> 链接</th>
+                                  <th width="10%">描述</th>
+                                  <th width="15%">时间</th>
+                                  <th width="10%">状态</th>
+                                  <th width="60%">操作</th>
+                          </thead>
+                          <tbody class="x-cate">
+                              {foreach $arr as $key=>$val}
+                              <tr cate-id='{$val.id}' fid='{$val.pid}'>
+                            
+                                  <td>{$val.id}</td>
+                                  <td>
+                                      {:str_repeat('&nbsp;&nbsp;',$val['level']*5)}
+                                      <i class="layui-icon x-show" status='true'>&#xe623;</i> 
+                                      {$val.name}
+                                  </td>
+                                  <td>
+                                    {if ($val['file_dir']!="")}
+                                    <img src="{$val.file_dir}" style="width:60px;height:60px;" > 
+                                    {else}
+                                    暂无图片
+                                    {/if} 
+                                  
+                                </td>
+                                <td>
+                                    {$val.url}
+                                </td>
+                                  <td>
+                                      {$val.info}
+                                  </td>
+                                  <td>
+                                      {$val.update_time}
+                                  </td>
+                                  <td>
+                                    <input type="checkbox" cid="{$val.id}" name="switch" lay-text="停用|开启" 
+                                    {if ($val['status']==1)}
+                                            checked value="{$val.status}" 
+                                    {/if} 
+                                    lay-skin="switch" lay-filter="switch">
+                                  </td>
+                                  <td class="td-manage">
+                                      <button class="layui-btn layui-btn layui-btn-xs"
+                                          onclick="add('编辑{$val.name}栏目','columnedit','id',{$val.id})">
+                                          <i class="layui-icon">&#xe642;</i>编辑
+                                      </button>
+                                      <button class="layui-btn layui-btn-warm layui-btn-xs"
+                                    onclick="add('添加{$val.name}的子栏目','columnadd','pid',{$val.id})">
+                                          <i class="layui-icon">&#xe642;</i>添加子栏目
+                                      </button>
+                                      <button class="layui-btn-danger layui-btn layui-btn-xs"
+                                          onclick="del(this,'{$val.id}','{$val.file_id}')">
+                                          <i class="layui-icon">&#xe640;</i>删除
+                                      </button>
+                                  </td>
+                              </tr>
+                              {/foreach}
+                          </tbody>
+                      </table>
+                      
+                  </div>
+                  <div class="layui-card-body ">
+                  
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+        <script>
+
+        function add(name,url,key,val){
+           
+            layer.open({
+                title: name
+                ,type:2
+                ,maxmin: true
+                ,content:'__URL__/index/'+url+'?'+key+'='+val
+                ,area:['950px','650px']
+                ,shadeClose:false //true的话点击弹窗外会关闭弹窗
+                ,success:function(layero,index){
+                }
+                ,end:function(){
+                    $.ajax({
+                        type: "get",
+                        url: "__URL__/index/delImg",
+                        data: {
+                            'delImgEnd': 'delImgEnd'
+                        },
+                        dataType: "json",
+                        success: function (msg) {
+                        },
+                        error: function () {
+                        }
+                    })
+                }
+            })
+
+        }
+        
+           layui.use(['form', 'layer'],
+            function() {
+              $ = layui.jquery;
+              var form = layui.form,
+              layer = layui.layer;
+              form.on('switch(switch)', function(obj){
+                var data = {
+                    'id':$(obj.elem).attr('cid'),
+                    'status': $(obj.elem).val()
+                }
+                $.ajax({
+                  type : "post"
+                  ,url : "__URL__/index/columnedit"
+                  ,dataType : "json"
+                  ,data : {"data": data}
+                  ,success: function (msg) {
+                        layer.msg(msg.msg);
+                    }
+                    ,error: function () {
+                        layer.msg('服务器出错请稍后重试');
+                    }
+                })
+              });
+            })
+          
+
+          function del(obj,id,file_id){
+              
+                  //发异步删除数据
+                  $.ajax({
+                    type : "delete"
+                    ,url : "__URL__/index/columnDel"
+                    ,dataType : "json"
+                    ,data : {
+                        "id": id,
+                        "file_id": file_id,
+                        }
+                    ,success : function(msg){
+                      alert(msg.msg);
+                      if (msg.code==200) {
+                        location.reload()  
+                      }
+                    }
+                    ,error : function(){
+                        layer.msg('服务器出错请稍后重试');
+
+                    }
+                  })  
+          }
+
+        // 分类展开收起的分类的逻辑
+        $(function () {
+            $("tbody.x-cate tr[fid!='0']").hide();
+            // 栏目多级显示效果
+
+            $('.x-show').click(function () {
+                if ($(this).attr('status') == 'true') {
+                    $(this).html('&#xe625;');
+                    $(this).attr('status', 'false');
+                    cateId = $(this).parents('tr').attr('cate-id');
+                    $("tbody tr[fid=" + cateId + "]").show();
+                } else {
+                    cateIds = [];
+                    $(this).html('&#xe623;');
+                    $(this).attr('status', 'true');
+                    cateId = $(this).parents('tr').attr('cate-id');
+                    getCateId(cateId);
+                    for (var i in cateIds) {
+                        $("tbody tr[cate-id=" + cateIds[i] + "]").hide().find('.x-show').html('&#xe623;').attr('status', 'true');
+                    }
+                }
+            })
+
+            var tr = $("tbody tr"); //找到所有的tr
+            tr.each(function () {
+                var catid = $(this).attr('cate-id');   //栏目id 
+                var bool = false;
+
+                tr.each(function () { //父级id
+                    var fid = $(this).attr('fid');
+                    if (fid == catid) { // 有子栏目
+                        bool = true;
+                    }
+                });
+
+                if (bool == false) {
+                    $(this).find('.x-show').remove();// 没有子栏目 去掉三角形
+                } else {
+                    $(this).find('#nopid').remove();// 有子栏目 去掉字符 |--
+                }
+            });
+
+        })
+
+        var cateIds = [];
+        function getCateId(cateId) {
+            $("tbody tr[fid=" + cateId + "]").each(function (index, el) {
+                id = $(el).attr('cate-id');
+                cateIds.push(id);
+                getCateId(id);
+            });
+        }
+
+   
+        </script>
+    </body>
+</html>

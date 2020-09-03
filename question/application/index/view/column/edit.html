@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+
+<head>
+    <meta charset="UTF-8">
+    <title>栏目编辑</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+        content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <link rel="stylesheet" href="__STATIC__/css/font.css">
+    <link rel="stylesheet" href="__STATIC__/css/xadmin.css">
+    <script type="text/javascript" src="__STATIC__/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="__STATIC__/js/xadmin.js"></script>
+    <script type="text/javascript" src="__STATIC__/js/jquery.min.js"></script>
+    <script type="text/javascript" src="__STATIC__/js/cropper.js"></script>
+    <script type="text/javascript" src="__STATIC__/js/croppers.js"></script>
+    <script type="text/javascript" src="__STATIC__/uploads__STATIC__/js/publishImg.js"></script>
+</head>
+
+    <style>
+        .layui-input-inline{
+            width: 100px;
+        }
+    </style>
+<body>
+    <div class="layui-fluid">
+        <div class="layui-row">
+            <form class="layui-form" lay-filter="form" method="GET"> 
+                <div class="layui-form-item">
+                    <label for="username" class="layui-form-label">
+                        <span class="x-red">*</span>栏目名称
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="name" value="{$data.name}"  name="name" required="required" lay-verify="name"  class="layui-input">
+                    </div> 
+                </div>
+                <div class="layui-form-item">
+                    <label for="username" class="layui-form-label">
+                        <span class="x-red"></span>栏目链接
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="url" value="{$data.url}"  name="url"  class="layui-input">
+                    </div> 
+                </div>
+                <div class="layui-form-item">
+                    <label for="username" class="layui-form-label">
+                        <span class="x-red">*</span>父栏目
+                    </label>
+                    <div class="layui-input-inline">
+                        <select name="pid" id="pid">
+                            
+                            {foreach $tree as $vals}
+                           
+                                <option value="{$vals.id}" 
+                                    {if ($vals['id']==$data['pid'])}
+                                    selected
+                                    {/if} 
+                                >{$vals.name}</option>
+
+                            {/foreach}  
+
+
+                        </select>
+                    </div> 
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">图片</label>
+                    <div class="layui-input-inline layui-btn-container" style="width: auto;">
+                        <div class="layui-btn layui-btn-primary" id="editimg">上传图片</div >
+                    </div>
+                    <div class="layui-input-inline">
+                        <div class="layui-upload-list" style="margin:0; min-width: 666px; min-height: 300px; margin-top: 50px; margin-left: -88px; border: dashed 1px gainsboro;" id="img" >
+                            {foreach $img as $key=>$val}
+                                <img src="{$val}" id="srcimgurl" class="layui-upload-img" style="position: relative;z-index: 1;">
+                                <i class="layui-icon layui-icon-close" style="z-index: 5;font-size: 16px; color: black;position: relative;left:-16px;top:-64px;" id="delimg"></i>
+                                <input type="text" name="head" value="{$val}" style="display: none;" lay-verify="required" id="inputimgurl" placeholder="图片地址"  class="layui-input">
+                            {/foreach}
+
+                        </div>
+                    </div>
+                   
+                    <div class="layui-form-mid layui-word-aux">图片的尺寸限定150x150px,大小在50kb以内</div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="phone" class="layui-form-label">
+                        <span class="x-red"></span>描述
+                    </label>
+                    <div class="layui-input-inline">
+                        <textarea name="info" id="info" value="" cols="97" rows="9">{$data.info}</textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <input type="hidden" name="id" value="{$data.id}">
+                    <input type="hidden" name="file_id" value="{$data.file_id}">
+                    <label for="L_repass" class="layui-form-label"> </label>
+                    <input type="submit" class="layui-btn" lay-filter="update" lay-submit value="确定">
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        layui.config({
+               
+               base: '__STATIC__/cropper/' //layui自定义layui组件目录
+               }).use(['form','croppers'], function () {
+                   var $ = layui.jquery
+                   ,form = layui.form
+                   ,croppers = layui.croppers
+                   ,layer= layui.layer;
+                                
+//创建一个头像上传组件
+    
+               croppers.render({
+                   elem: '#editimg'
+                   ,saveW:150     //保存宽度
+                   ,saveH:150
+                   ,mark:1/1    //选取比例
+                   ,area: '900px'  //弹窗宽度
+                   ,type: 2
+                   ,url: '__URL__/index/uploadImg'  
+                   ,done: function(url){ //上传完毕回调
+                       var img = $('#img').html()
+                       var imges = img +  '<img src="'+url+'" id="srcimgurl" class="layui-upload-img" style="position: relative;z-index: 1;">'+
+                       '<i class="layui-icon layui-icon-close" style="z-index: 5;font-size: 16px; color: black;position: relative;left:-16px;top:-64px;" id="delimg"></i>'+
+                       '<input type="text" name="head" value="'+url+'" style="display: none;" lay-verify="required" id="inputimgurl" placeholder="图片地址"  class="layui-input">'
+                       $('#img').html(imges)
+                   }
+               });
+    
+           });
+        $('#img').on('click','#delimg',function(){
+            $(this).prev().remove()
+            $(this).next().remove()
+            $(this).remove()
+        })
+
+        layui.use(['form', 'layer'], function () {
+            $ = layui.jquery;
+            var form = layui.form,
+                layer = layui.layer;
+            form.on('submit(update)', function (data) {
+
+                var img = []
+                $.each($('input[name="head"]'), function(val){ 
+                    img.push($('input[name="head"]').eq(val).val())
+                })  
+                delete data.field.head;
+                $.ajax({
+                    type: "post",
+                    url: "__URL__/index/columnedit",
+                    data: {
+                       'data' : data.field, 
+                       'img'  : img,
+                    } ,
+                    dataType: "json",
+                    success: function (msg) {
+                        alert(msg.msg)
+                        if (msg.code == 200) {
+                            xadmin.close();
+                            xadmin.father_reload();
+                        }
+                    },
+                    error: function () {
+                        alert('服务器繁忙请稍后重试');
+                    }
+                })
+                return false; 
+            });
+        });
+
+    </script>
+</body>
+
+</html>

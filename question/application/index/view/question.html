@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width" />
+    <title>问答系统后台</title>
+    <script type="text/javascript" src=" __STATIC__/vue.js/vue.min.js"></script>
+    <script type="text/javascript" src=" __STATIC__/js/jquery.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        #box {
+            margin: 0 auto;
+            width: 1200px;
+            height: 900px;
+            display: flex;
+            flex-direction: column;
+            border: solid 2px red;
+            color: black;
+            font-weight: bolder;
+        }
+
+        .head {
+            height: 50px;
+            display: flex;
+            align-items: center;
+            border: solid 2px red;
+            justify-content: space-between;
+        }
+
+        .logo {
+            width: 70px;
+            height: 30px;
+            border: solid 2px red;
+            margin: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fool {
+            height: 50px;
+            border: solid 2px red;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .question_check {
+            display: flex;
+            color: black;
+            margin-bottom: 10px;
+        }
+
+        .question_check_view {
+            display: flex;
+
+        }
+
+        .question_check_views {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+        }
+
+        .name {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: solid 2px red;
+            margin: 5px 0;
+            min-width: 130px;
+            height: 34px;
+        }
+
+        .tree_border {
+            display: flex;
+            align-items: center;
+            margin-right: -2px;
+            width: 22px;
+        }
+
+        .dd {
+            position: relative;
+            background: #fff;
+            margin-left: -2px;
+            margin-right: 0px;
+        }
+
+        .trees {
+            position: relative;
+            z-index: 999;
+            height: 50%;
+            width: 2px;
+            left: -22px;
+        }
+
+        .top {
+            top: calc(-24.9% - 1px);
+            background: #fff;
+        }
+
+        .bot {
+            top: calc(25.1% + 1px);
+            background: #fff;
+        }
+
+        .tree_borders {
+            width: 20px;
+            border: solid 1.5px red;
+            height: 0px;
+        }
+
+        .tree {
+            width: 0px;
+            border: solid 1.5px red;
+        }
+
+        .bt {
+            border: solid 1px #999;
+            background: #009ef7;
+            color: #f7f7f7;
+            margin: 6px 0 6px 6px;
+            font-size: 10px;
+            height: 34px;
+            width: 65px;
+            float: left;
+        }
+
+        .edit_view {
+            width: 329px;
+            display: none;
+        }
+
+        .insert {
+            width: 600px;
+            display: inline;
+        }
+        .mouseenter{
+            display: flex;
+            flex-direction: row;
+            align-content: center;
+            width: 221px;
+            margin-right: -2px;
+        }
+
+        .input {
+            width: 100px;
+            height: 32px;
+            border: solid 2px #999;
+            background: #fff;
+            color: black;
+            font-weight: bolder;
+            text-align:center;
+            font-size: 12px;
+        }
+        .show{
+            border: none;
+            font-size: 16px;
+        }
+
+        .del {
+            background: #e22500;
+        }
+        .check{
+            background: #f7f7f7;
+            color: #999;
+            border: solid 2px #999;
+        }
+        .checked{
+            border: solid 2px red;
+        }
+        .type{
+            margin: 6px 0 6px 6px;
+            font-size: 10px;
+            height: 34px;
+            width: 65px;
+            float: left;
+        }
+        .out{
+            min-width: 80px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="box">
+        <div class="head">
+            <div class="logo">LOGO</div>
+            <div >后台管理</div>
+            <div class="logo">其他链接</div>
+        </div>
+        
+        <div class="question" style="height: 800px; overflow: auto;">
+            <blog-post v-if="list.msg.length>0" :list="list" @increment="add">
+            </blog-post>
+
+            <div class="edit_view insert">
+                <input placeholder="请输入节点名称" v-model="name" class="question_check_views bt input" />
+                <div class="question_check_views bt" @click="add({pid:0,name:name,type:1},'add')">添加一级节点</div>
+            </div>
+  
+            <div style="width: 800px;"></div>
+        </div>
+        <div class="fool">
+            版权信息
+        </div>
+    </div>
+    <script>
+        var msg = {:html_entity_decode($data)};
+        msg.forEach(function(val,index){
+            msg[index]['valueName'] = '';
+            msg[index]['valueInfo'] = '';
+        });
+        Vue.component('blog-post', {
+            name: 'blog-post'
+            , props: ['list']
+            ,data() {
+                return {
+                    mouseenterId:'',
+                    outId:'',
+                    typeId:2,
+                }
+            }
+            , template:
+                '<div>' +
+                '<div v-if="val.pid==list.pid" v-for="(val,key) in list.msg" class="question_check_view">' +
+                '<div :class=" list.tree[1]==list.tree[0] && list.tree[1]==val.id ? \'tree_border dd\' : \'tree_border\' ">' +
+                
+                '<div class="tree_borders"></div>' +
+                '<div v-if="list.tree[0] && list.tree[0]==val.id " class="trees top" ></div>' +
+                '<div v-else-if="list.tree[1] && list.tree[1]==val.id" class="trees bot" ></div>' +
+                '<div v-else class="trees" ></div>' +
+                
+                '</div>' +
+
+                '<div class="question_check_view" >' +
+                '<div class="question_check_views"  @mouseleave="mouseenter(\'\')">' +
+                '<div class="name" @mouseenter="mouseenter(val.id)" v-if="val.type==1">' +
+                '<input placeholder="请输入节点" v-model="val.name" @mouseleave="add({name:val.name,id:val.id},\'edit\')" class="question_check_views bt input show" /> ' +
+                '</div>' +
+    
+                '<div v-if="mouseenterId == val.id && 1!=val.tree" class="edit_view mouseenter">' +
+                '<div class="question_check_views">描述:</div><input  placeholder="节点描述 " @mouseleave="add({info:val.info,id:val.id},\'edit\')" v-model="val.info" class="question_check_views bt input" />' +
+                // '<div   v-if="mouseenterId == val.id" class="question_check_views bt" @click="add({pid:val.id,name:val.valueName,type:1,info:val.valueInfo},\'add\')">添为子级</div>' +
+                // '<div   v-if="mouseenterId == val.id" class="question_check_views bt" @click="add({pid:val.pid,name:val.valueName,type:1,info:val.valueInfo},\'add\')">添为同级</div>' +
+                '<div class="question_check_views bt del" @click="add(val.id,\'del\')">删除</div>' +
+                '</div>' +
+
+                '<div class="name out" v-if="val.type != 1">' +
+                '<span v-if="val.type == 2">结束语</span>' +
+                '<span v-if="val.type == 3">跳转地址</span>:' +
+                '</div>' +
+
+                '</div>' +
+                '</div>' +
+
+                '<div v-if="1!=val.tree" class="tree_border" >' +
+                '<div class="tree_borders"></div>' +
+                '</div>' +
+                //1==val.tree 为无子级 最低级 最后一个
+                '<div class="edit_view insert" v-if="1==val.tree">' +
+
+                '<input  v-if="val.type != 1" v-model="val.name" @mouseleave="add({name:val.name,id:val.id},\'edit\')" placeholder="请输入节点名称" class="question_check_views bt input" />' +
+                '<input  v-if="val.type != 1"  @mouseleave="add({info:val.info,id:val.id},\'edit\')" v-model="val.info" placeholder="请输入节点描述" class="question_check_views bt input" />' +
+
+                '<input v-if="val.type == 1"  v-model="val.valueName"  placeholder="请输入节点名称" class="question_check_views bt input" />' +
+                '<input v-if="val.type == 1"  v-model="val.valueInfo" placeholder="请输入节点描述" class="question_check_views bt input" />' +
+
+                '<div   v-if="val.id != outId && val.type == 1" class="question_check_views bt" @click="add({pid:val.id,name:val.valueName,type:1,info:val.valueInfo},\'add\')">添为子级</div>' +
+                '<div   v-if="val.id != outId && val.type == 1" class="question_check_views bt" @click="add({pid:val.pid,name:val.valueName,type:1,info:val.valueInfo},\'add\')">添为同级</div>' +
+                '<div   v-if="val.id != outId && val.type == 1 && val.pid !=0" class="question_check_views bt" @click="out(val,key)">设为结点</div>' +
+                
+                '<div   v-if="val.id == outId"  class="question_check_views type" >选择类型：</div>' +
+                '<div   v-if="val.id == outId"  class="question_check_views bt check" :class="typeId == 2 && \'checked\'" @click="checkType(2)">结束语</div>' +
+                '<div   v-if="val.id == outId"  class="question_check_views bt check" :class="typeId == 3 && \'checked\'" @click="checkType(3)">跳转地址</div>' +
+                '<div   v-if="val.id == outId"  class="question_check_views bt"     @click="add({id:val.id,name:val.name,type:typeId,info:val.info},\'edit\')">确定</div>' +
+                '<div   v-if="val.id == outId"  class="question_check_views bt del" @click="out(\'\')">返回</div>' +
+
+                '<div   v-if="val.id != outId && val.type != 1"  class="question_check_views bt"     @click="out(val,key)">修改</div>' +
+                '<div   v-if="val.id != outId " class="question_check_views bt del" @click="add(val.id,\'del\')">删除</div>' +
+                '</div>'+
+
+                '<div v-if="1!=val.tree" class="tree"> </div> ' +
+                '<blog-post v-if="val.id"  :list="{pid:val.id,tree:val.tree,msg:list.msg}"  @increment="add"  ></blog-post>' +
+                '</div>' +
+                '</div>'
+            , methods: {
+                out: function(val,key){
+                    this.outId = val.id;
+                },
+                checkType: function(typeId){
+                    this.typeId = typeId
+                },
+                mouseenter: function (id) {
+                    this.mouseenterId = id;
+                }, 
+                add: function (val, mold) {
+                    this.$emit('increment', val,mold);
+                },
+            },
+        })
+ 
+        new Vue({
+            el: "#box",
+            data: {
+                list: {
+                    'pid': 0,
+                    'tree': ['', ''],
+                    'msg': msg,
+                },
+                name:'',
+            },
+            methods: {
+                add: function (val,url) {
+                    var that = this;
+                    if(url == 'add' || url == 'edit') {
+                        if (val.name == ''){
+                            return alert('请输入节点');
+                        } 
+                    }
+                    url && $.ajax({
+                        type: "get"
+                        , url: '__URL__/index/question/' + url
+                        , dataType: "json"
+                        , data: {
+                            'data': val,
+                        }
+                        , success: function (msg) {
+                            msg.code == 200 && (that.list.msg = msg.data);
+                        }
+                        , error: function (e) {
+                            alert('通信失败')
+                        }
+                    })
+                },
+            }
+
+        })
+
+    </script>
+</body>
+
+</html>

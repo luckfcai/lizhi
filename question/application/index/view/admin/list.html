@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+    <head>
+        <meta charset="UTF-8">
+        <title>管理员列表</title>
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+        <link rel="stylesheet" href="__STATIC__/css/font.css">
+        <link rel="stylesheet" href="__STATIC__/css/xadmin.css">
+        <script src="__STATIC__/lib/layui/layui.js" charset="utf-8"></script>
+        <script type="text/javascript" src="__STATIC__/js/xadmin.js"></script>
+        <script src="__STATIC__/js/jquery.min.3.5.1.js"></script>
+        <script src="__STATIC__/layui/layui.all.js"></script>
+        <script src="__STATIC__/layui/layui.js"></script>
+        <link rel="stylesheet" href="__STATIC__/layui/css/layui.css">
+        <style>
+          *{padding: 0px;margin: 0px;}
+          .layui-table-cell{
+            height: inherit;
+          }
+        </style>
+    </head>
+    <body>
+      <div >
+        <div class="x-nav">
+          <span class="layui-breadcrumb">
+            <a href="">首页</a>
+            <a href="">演示</a>
+            <a>
+              <cite>导航元素</cite></a>
+          </span>
+          <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" onclick="location.reload()" title="刷新">
+            <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i></a>
+        </div>
+        <div class="layui-fluid">
+            <div class="layui-row layui-col-space15">
+              <div class="layui-col-md2" id="md2" style="height: 333px; display: none; border: solid 1px ghostwhite; background-color: ghostwhite; margin-top: 7px;">
+                <div style="height: 333px; margin: -8px;" >
+                  <div style="height: 40px;width: 100%; background-color: #009688; font-size: 19px;line-height: 40px; color: ghostwhite;">&nbsp;&nbsp;管理员分类列表</div>
+                  <div id="test1" style="font-size: 14px;"></div>
+                </div>
+                  <div style="position: absolute; right: 0px; top: 40%;">
+                    <button class="layui-btn" id="left" style="width: 25px; height: 40px;">
+                    <i class="layui-icon layui-icon-left" style="font-size: 20px; margin-left: -8px;"></i></button>
+                  </div>
+                </div>
+                <div class="layui-col-md12" id="md10" style="height: 333px;">
+                    <div class="layui-card" style="height: 333px;">
+                        <div class="layui-card-body ">
+                            <form class="layui-form layui-col-space5">
+                                <div class="layui-inline layui-show-xs-block">
+                                    <input type="text" name="username"  placeholder="请输入昵称" autocomplete="off" class="layui-input">
+                                </div>
+                                <div class="layui-inline layui-show-xs-block">
+                                    <div class="layui-btn"  lay-submit="" lay-filter="sreach" id="sreach"><i class="layui-icon">&#xe615;</i></div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="layui-card-header layui-col-md12">
+                            <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>
+                            <button class="layui-btn" onclick="xadmin.open('添加管理员','./adminAdd',600,400)"><i class="layui-icon"></i>添加</button>
+                        </div>
+                        <div class="layui-card-body layui-col-md12">
+                            <table class="layui-table layui-form layui-col-md12">
+                              <table id="test" lay-filter="test" class="layui-table-cell" ></table>
+                            </table>
+                        </div>
+                        <div class="layui-card-body ">
+                          <table class="layui-hide" id="test"></table>
+                            <div class="" id="page">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> 
+      </div>
+    </body>
+    <script type="text/html" id="img">
+          <img src={{d.img_url}} width="60px">
+    </script>
+    <script type="text/html" id="caozuo">
+      <a class="layui-btn layui-btn-xs" lay-event="update">编辑</a>
+      <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    </script> 
+    <script type="text/html" id="titleTpl">  
+      {{#  if(d.status == 1){ }}
+        <span class="layui-btn layui-btn-normal layui-btn-mini " lay-event="status">已启用</span>
+      {{#  } else { }}
+        <span class="layui-btn layui-btn-normal layui-btn-mini layui-btn-danger" lay-event="status">已禁用</span>
+      {{#  } }}
+    </script>
+<script> 
+    $('#sreach').on('click',function(){
+      layui.use('table', function(){
+
+        var table = layui.table;
+        var like = $('[name="username"]').val()=='' ? "%" : $('[name="username"]').val();
+        table.render({
+
+          elem: '#test'
+          ,url: "__URL__/index/adminlist?like="+like 
+          ,page: true 
+          ,limit: 2
+          ,where:{"list":"list"}
+          ,id:"test"
+          ,cols: [[
+              {checkbox: true}
+              ,{field: 'id', title: 'ID', sort: true,width: 70}
+              ,{field: 'nick_name', title: '昵称'}
+              ,{field: 'update_time', title: '修改时间', sort: true}
+              ,{field: 'status', title: '状态',sort: true,width: 90, templet:'#titleTpl'}
+              ,{"title":"操作",toolbar:"#caozuo",width:200}
+          ]]
+        })
+      }) 
+    })
+    layui.use('table', function(){
+
+        var table = layui.table;
+        table.render({
+
+          elem: '#test'
+          ,url: '__URL__/index/adminlist'
+          ,page: true
+          ,limit: 2
+          ,where:{"list":"list"}
+          ,id:"test"
+          ,cols: [[ 
+              {checkbox: true}
+              ,{field: 'id', title: 'ID', sort: true,width: 70}
+              ,{field: 'nick_name', title: '昵称',width: 150}
+              ,{field: 'update_time', title: '修改时间', sort: true,width: 200}
+              ,{field: 'status', title: '状态',sort: true,width: 90, templet:'#titleTpl'}
+              ,{"title":"操作",toolbar:"#caozuo"}
+
+          ]]
+        })
+
+    table.on('tool(test)', function(obj){ 
+        var data = obj.data;
+        var layEvent = obj.event ;
+        var tr = obj.tr;
+        //删除
+        if (layEvent == 'del') {  
+          layer.confirm('真的删除行么', function(index){
+
+            $.ajax({
+              type : "POST"
+              ,url : "__URL__/index/admindel"
+              ,dataType : "json"
+              ,data : {"id": data.id}
+              ,success : function(msg){
+                msg.code == 200 && obj.del();
+                layer.msg(msg.msg);
+              }
+              ,error : function(e){
+                layer.msg('服务器繁忙请稍后重试');
+              }
+            })
+          })
+
+        //修改
+        } else if(layEvent === 'update') { 
+
+          layer.open({
+            title: '编辑'
+            ,type:2
+            ,maxmin: true
+            ,content:'__URL__/index/adminEdit'
+            ,area:['900px','650px']
+            ,shadeClose:false 
+            ,success:function(layero,index){
+              var body = layer.getChildFrame('body',index)
+              body.find('#id').val(obj.data.id)
+              body.find('#nick_name').val(obj.data.nick_name)
+              body.find('#password').val(obj.data.password)
+              body.find('#nick_names').val(obj.data.nick_name)
+              body.find('#passwords').val(obj.data.password)
+            }
+          })
+
+        //修改状态 
+        } else if(layEvent === 'status') { 
+          var status = obj.data.status == 1 ? 0 : 1;
+          editData = {
+                   'id' : obj.data.id,
+                  'status' : status,
+          }
+          $.ajax({
+                type: "post"
+                ,url: '__URL__/index/adminEdit'
+                ,data: {
+                  'data' : editData
+                }
+                ,dataType: "json"
+                ,success: function (msg) {
+                    msg.code == 200 &&  table.reload('test');
+                    layer.msg(msg.msg);
+                }
+                ,error: function () {
+                  layer.msg('服务器繁忙请稍后重试')
+                }
+          })
+        } 
+      })    
+    })
+    //删除选中
+    function delAll() { 
+      layer.confirm('确认要删除吗？', function (index) {
+          layui.use('table', function () {
+              var table = layui.table;
+              var checkStatus = table.checkStatus('test'); 
+              var data = checkStatus.data;
+              var id = $.map(data,function(d){return d.id});
+              $.ajax({
+              type : "POST"
+              ,url : "__URL__/index/admindel"
+              ,dataType : "json"
+              ,data : {"id": id}
+              ,success : function(msg){
+                msg.code==200 && location.reload();
+                alert(msg.msg);
+              }
+              ,error : function(e){
+                  alert.msg('服务器繁忙请稍后重试')
+              }
+            })
+          })   
+      })
+    } 
+    </script>
+</html>

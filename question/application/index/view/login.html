@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登陆</title>
+    <script type="text/javascript" src=" __STATIC__/vue.js/vue.min.js"></script>
+    <script type="text/javascript" src=" __STATIC__/js/jquery.min.js"></script>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    #box {
+        margin: 0px auto;
+        width: 300px;
+        height: 470px;
+        display: flex;
+        flex-direction: column;
+        color: red;
+        font-weight: bolder;
+        border: solid 1px red;
+    }
+
+    .head {
+        height: 60px;
+        display: flex;
+        align-items: center;
+        border: solid 2px red;
+        justify-content: space-between;
+    }
+
+    .logo {
+        width: 70px;
+        height: 30px;
+        border: solid 2px red;
+        margin: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .fool {
+        height: 45px;
+        border: solid 2px red;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* .input{
+        height: 35px;
+        border: solid 1px black;
+        margin: 0 10% 20px;
+        display: flex;
+        align-items: center;
+    } */
+    .title {
+        height: 35px;
+        display: flex;
+        align-items: center;
+    }
+
+    .login {
+        height: 500px;
+    }
+
+    .login_view {
+        min-height: 200px;
+        width: 80%;
+        margin: 40px 10%;
+        border: solid 1px red;
+    }
+
+    input {
+        height: 29px;
+        width: 80%;
+        background: #fff;
+        border: solid 1px #999;
+        margin: 10px 10%;
+    }
+
+    .but {
+        width: calc(80% + 2px);
+        height: 31px;
+        margin-bottom: 20px;
+    }
+
+    .code {
+        width: 40%;
+        margin: 0 0 0 10%;
+    }
+
+    .bt {
+        width: 35%;
+        margin: 0 3%;
+        position: relative;
+        top: 1px;
+    }
+</style>
+
+<body>
+    <div id="box">
+        <div class="head">
+            <div class="logo">LOGO</div>
+            <!-- <div class="logo">去登陆</div> -->
+            <div class="logo" @click="cut()">{{type=='login' ? '去注册' : '去登陆'}} </div>
+        </div>
+        <div class="login">
+            <div class="login_view" v-if="type=='login'">
+                <div class="title"> &nbsp;&nbsp;用户登陆中心:</div>
+                <div>
+                    <input type="text" placeholder="用户名/手机号" v-model="phone">
+                </div>
+                <div>
+                    <input type="password" placeholder="密码 " v-model='password'>
+                </div>
+                <div>
+                    <input type="button" class="but" value="登陆" @click="up()">
+                </div>
+            </div>
+            <div class="login_view" v-if="type=='register'">
+                <div class="title"> &nbsp;&nbsp;用户注册 :</div>
+                <div>
+                    <input type="text" placeholder="请输入手机号" v-model="phone">
+                </div>
+                <div>
+                    <input type="password" placeholder="请设置密码 " v-model='password'>
+                </div>
+                <div>
+                    <input class="code" type="text" placeholder="请输入验证码  " v-model='code'>
+                    <input class="but code bt" type="button" :value="btnText" @click="send()">
+                </div>
+                <div>
+                    <input type="button" class="but" value="确定" @click="up()">
+                </div>
+            </div>
+        </div>
+        <div class="fool">
+            版权信息
+        </div>
+    </div>
+
+    <script>
+        //register
+        new Vue({
+            el: "#box",
+            data: {
+                phone: '',
+                password: '',
+                type: 'register',
+                code: '',
+                vercode: '',
+                btnText: '获取验证码',
+                btnDisabled: false,
+
+            },
+            methods: {
+                cut: function(){
+                    this.type =  this.type == 'register' ? 'login' : 'register';
+                },
+                up: function () {
+                    var data = {
+                        'phone': this.phone,
+                        'passworde': this.passworde
+                    };
+                    if(this.type =='register') {
+                        if (!(this.code == this.vercode && this.vercode.length == 6)) {
+                            alert('请输入正确的验证码');
+                            return;
+                        }
+                    }
+                    $.ajax({
+                        type: "post"
+                        , url: '__URL__/login'
+                        , dataType: "json"
+                        , data: {
+                            'data': data,
+                            'type': this.type
+                        }
+                        , success: function (msg) {
+                            alert(msg.msg);
+                        }
+                        , error: function (e) {
+                            alert('服务器繁忙请稍后重试')
+                        }
+                    })
+                },
+                send: function () {
+                    var that = this;
+                    (this.phone != '' && !this.btnDisabled) && $.ajax({
+                        type: "post"
+                        , url: '__URL__/send'
+                        , dataType: "json"
+                        , data: {
+                            'phone': this.phone,
+                        }
+                        , success: function (msg) {
+                            alert(msg.msg);
+                            msg.code == 200 && (that.vercode = msg.data,that.getSecond());
+                        }
+                        , error: function (e) {
+                            alert('服务器繁忙请稍后重试')
+                        }
+                    })
+                },
+                getSecond(wait = 60) {
+                    let _this = this;
+                    let _wait = wait;
+                    if (wait == 0) {
+                        this.btnDisabled = false;
+                        this.vercode = '';
+                        this.btnText = "获取验证码";
+                        wait = _wait;
+                    } else {
+                        this.btnDisabled = true;
+                        this.btnText = "验证码(" + wait + "s)"
+                        wait--;
+                        setTimeout(function () {
+                            _this.getSecond(wait);
+                        },
+                            1000);
+                    }
+                }
+
+            }
+        })
+    </script>
+</body>
+
+</html>
