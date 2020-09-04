@@ -32,10 +32,11 @@ class Index extends Controller
      */
     public function login()
     {
+
         if (Request::has('data','post')) {
             switch(input('type')){
                 case 'login':
-                    $userInfo = examine('userInfo',input('data'));
+                    $userInfo = examine('user_info',input('data'));
                     if($userInfo){
                         Session::set('userInfo',$userInfo);
                         result($userInfo,200,'登陆成功');
@@ -44,8 +45,8 @@ class Index extends Controller
                     }
                     break;
                 case 'register':
-                    examine('userInfo',input('data')) && result('',100,'该手机已经注册过了');
-                    $id = DB::table('userInfo')->insertGetId(input('data'));
+                    examine('user_info',input('data')) && result('',100,'该手机已经注册过了');
+                    $id = DB::table('user_info')->insertGetId(input('data'));
                     if($id){
                         $userInfo = [
                             'id' => $id,
@@ -69,7 +70,7 @@ class Index extends Controller
     public function send()
     {
         if (Request::has('phone','post')) {
-            examine('userInfo',input('data')) && result('',100,'该手机已经注册过了');
+            examine('user_info',input('data')) && result('',100,'该手机已经注册过了');
             $code = rand(100000, 999999);
             $phone = input('phone');
             $result = send_sms($phone, $code);

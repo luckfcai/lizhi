@@ -1,155 +1,82 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="en" class="no-js">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>登陆</title>
-    <script type="text/javascript" src=" __STATIC__/vue.js/vue.min.js"></script>
-    <script type="text/javascript" src=" __STATIC__/js/jquery.min.js"></script>
-</head>
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+<meta name="viewport" content="width=device-width, initial-scale=1"> 
+<title>login</title>
+<link rel="stylesheet" type="text/css" href="__STATIC__/login/css/normalize.css" />
+<link rel="stylesheet" type="text/css" href="__STATIC__/login/css/demo.css" />
+<link rel="stylesheet" type="text/css" href="__STATIC__/login/css/component.css" />
+
+<script type="text/javascript" src=" __STATIC__/vue.js/vue.min.js"></script>
+<script type="text/javascript" src=" __STATIC__/js/jquery.min.js"></script>
+<!--[if IE]>
+<script src="js/html5.js"></script>
+<![endif]-->
 <style>
-    * {
-        margin: 0;
-        padding: 0;
-    }
-
-    #box {
-        margin: 0px auto;
-        width: 300px;
-        height: 470px;
+    .tosignIn{
+        font-size: 12px;
+        margin: -20px 20px 0 0;
         display: flex;
-        flex-direction: column;
-        color: red;
-        font-weight: bolder;
-        border: solid 1px red;
+        flex-direction: row-reverse;
     }
-
-    .head {
-        height: 60px;
-        display: flex;
-        align-items: center;
-        border: solid 2px red;
-        justify-content: space-between;
+    .validation{
+        width: 200px;
     }
-
-    .logo {
-        width: 70px;
-        height: 30px;
-        border: solid 2px red;
-        margin: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .fool {
-        height: 45px;
-        border: solid 2px red;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    /* .input{
-        height: 35px;
-        border: solid 1px black;
-        margin: 0 10% 20px;
-        display: flex;
-        align-items: center;
-    } */
-    .title {
-        height: 35px;
-        display: flex;
-        align-items: center;
-    }
-
-    .login {
-        height: 500px;
-    }
-
-    .login_view {
-        min-height: 200px;
-        width: 80%;
-        margin: 40px 10%;
-        border: solid 1px red;
-    }
-
-    input {
-        height: 29px;
-        width: 80%;
-        background: #fff;
-        border: solid 1px #999;
-        margin: 10px 10%;
-    }
-
-    .but {
-        width: calc(80% + 2px);
-        height: 31px;
-        margin-bottom: 20px;
-    }
-
-    .code {
-        width: 40%;
-        margin: 0 0 0 10%;
-    }
-
-    .bt {
-        width: 35%;
-        margin: 0 3%;
+    .toValidation{
         position: relative;
-        top: 1px;
+        left: 200px;
+        top: -2px;
+        height:46px;
+        border: rgba(255,255,255,0.2) 2px solid !important;
+        border-radius: 50px;
+        width: 120px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 </style>
-
+</head>
 <body>
-    <div id="box">
-        <div class="head">
-            <div class="logo">LOGO</div>
-            <div class="logo" @click="cut()">{{type=='login' ? '去注册' : '去登陆'}} </div>
-        </div>
-        <div class="login">
-            <div class="login_view" v-if="type=='login'">
-                <div class="title"> &nbsp;&nbsp;用户登陆中心:</div>
-                <div>
-                    <input type="text" placeholder="用户名/手机号" v-model="phone">
-                </div>
-                <div>
-                    <input type="password" placeholder="密码 " v-model='password'>
-                </div>
-                <div>
-                    <input type="button" class="but" value="登陆" @click="up()">
-                </div>
-            </div>
-            <div class="login_view" v-if="type=='register'">
-                <div class="title"> &nbsp;&nbsp;用户注册 :</div>
-                <div>
-                    <input type="text" placeholder="请输入手机号" v-model="phone">
-                </div>
-                <div>
-                    <input type="password" placeholder="请设置密码 " v-model='password'>
-                </div>
-                <div>
-                    <input class="code" type="text" placeholder="请输入验证码  " v-model='code'>
-                    <input class="but code bt" type="button" :value="btnText" @click="send()">
-                </div>
-                <div>
-                    <input type="button" class="but" value="确定" @click="up()">
-                </div>
-            </div>
-        </div>
-        <div class="fool">
-            版权信息
-        </div>
-    </div>
+		<div class="container demo-1" id="box">
+			<div class="content">
+				<div id="large-header" class="large-header">
+					<canvas id="demo-canvas"></canvas>
+					<div class="logo_box">
+						<h3>欢迎你</h3>
+						<form name="f">
+							<div class="input_outer">
+								<span class="u_user"></span>
+								<input name="logname" class="text" v-model="phone" style="color: #FFFFFF !important" type="text" placeholder="请输入账户/手机号">
+							</div>
+							<div class="input_outer">
+								<span class="us_uer"></span>
+								<input name="logpass" class="text" v-model="password" style="color: #FFFFFF !important; position:absolute; z-index:100;"value="" type="password" placeholder="请输入密码">
+                            </div>
 
-    <script>
-        new Vue({
+
+                            <div class="input_outer validation" v-if="type=='register'">
+								<span class="us_uer"></span>
+                                <input name="logpass" class="text " v-model="code" style="color: #FFFFFF !important; position:absolute; z-index:100;width:140px"value="" type="password" placeholder="请输入6位数验证码"> 
+                                <div class="toValidation" @click="send()">发送验证码</div> 
+                            </div>
+                           
+
+                            <div class="tosignIn" @click="cut()" v-if="type=='login'">没有账号？去注册</div>
+							<div class="mb2"><a class="act-but submit"  style="color: #FFFFFF;" @click="up()">{{type=='register' ? '注册并登录' : '登录' }}</a></div>
+						</form>
+					</div>
+				</div>
+			</div>
+        </div>
+        <script>
+                    new Vue({
             el: "#box",
             data: {
-                phone: '18617273784',
+                phone: '',
                 password: '',
-                type: 'register',
+                type: 'login',
                 code: '',
                 vercode: '',
                 btnText: '获取验证码',
@@ -227,7 +154,11 @@
 
             }
         })
-    </script>
-</body>
+        </script>
 
+		<script src="__STATIC__/login/js/TweenLite.min.js"></script>
+		<script src="__STATIC__/login/js/EasePack.min.js"></script>
+		<script src="__STATIC__/login/js/rAF.js"></script>
+		<script src="__STATIC__/login/js/demo-1.js"></script>
+	</body>
 </html>
