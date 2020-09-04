@@ -22,6 +22,7 @@
             border: solid 2px red;
             color: black;
             font-weight: bolder;
+            background: #fff;
         }
 
         .head {
@@ -145,8 +146,11 @@
             display: flex;
             flex-direction: row;
             align-content: center;
-            width: 221px;
-            margin-right: -2px;
+            width: 294px;
+            margin-right: -1px;
+        }
+        .add{
+            width: 452px;
         }
 
         .input {
@@ -225,6 +229,7 @@
                     mouseenterId:'',
                     outId:'',
                     typeId:2,
+                    addId:'',
                 }
             }
             , template:
@@ -245,11 +250,18 @@
                 '<input placeholder="请输入节点" v-model="val.name" @mouseleave="add({name:val.name,id:val.id},\'edit\')" class="question_check_views bt input show" /> ' +
                 '</div>' +
     
-                '<div v-if="mouseenterId == val.id && 1!=val.tree" class="edit_view mouseenter">' +
-                '<div class="question_check_views">描述:</div><input  placeholder="节点描述 " @mouseleave="add({info:val.info,id:val.id},\'edit\')" v-model="val.info" class="question_check_views bt input" />' +
-                // '<div   v-if="mouseenterId == val.id" class="question_check_views bt" @click="add({pid:val.id,name:val.valueName,type:1,info:val.valueInfo},\'add\')">添为子级</div>' +
-                // '<div   v-if="mouseenterId == val.id" class="question_check_views bt" @click="add({pid:val.pid,name:val.valueName,type:1,info:val.valueInfo},\'add\')">添为同级</div>' +
-                '<div class="question_check_views bt del" @click="add(val.id,\'del\')">删除</div>' +
+                '<div v-if="mouseenterId == val.id && 1!=val.tree" class="edit_view mouseenter" :class="val.id==addId && \'add\'">' +
+                '<div v-if="val.id != addId" class="question_check_views">描述:</div><input  placeholder="节点描述 " @mouseleave="add({info:val.info,id:val.id},\'edit\')" v-model="val.info" class="question_check_views bt input" />' +
+
+                '<div v-if="val.id != addId" class="question_check_views bt del" @click="add(val.id,\'del\')">删除</div>' +
+                '<div v-if="val.id != addId" class="question_check_views bt" @click="addId_chekc(val.id)">添加</div>' +
+
+                '<input v-if="val.id == addId"  v-model="val.valueName"  placeholder="请输入节点名称" class="question_check_views bt input" />' +
+                '<input v-if="val.id == addId"  v-model="val.valueInfo" placeholder="请输入节点描述" class="question_check_views bt input" />' +
+
+                '<div   v-if="val.id == addId" class="question_check_views bt" @click="add({pid:val.id,name:val.valueName,type:1,info:val.valueInfo},\'add\')">添为子级</div>' +
+                '<div   v-if="val.id == addId" class="question_check_views bt" @click="add({pid:val.pid,name:val.valueName,type:1,info:val.valueInfo},\'add\')">添为同级</div>' +
+
                 '</div>' +
 
                 '<div class="name out" v-if="val.type != 1">' +
@@ -291,6 +303,9 @@
                 '</div>' +
                 '</div>'
             , methods: {
+                addId_chekc: function(id){
+                    this.addId = id
+                },
                 out: function(val,key){
                     this.outId = val.id;
                 },

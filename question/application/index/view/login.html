@@ -106,7 +106,6 @@
     <div id="box">
         <div class="head">
             <div class="logo">LOGO</div>
-            <!-- <div class="logo">去登陆</div> -->
             <div class="logo" @click="cut()">{{type=='login' ? '去注册' : '去登陆'}} </div>
         </div>
         <div class="login">
@@ -145,11 +144,10 @@
     </div>
 
     <script>
-        //register
         new Vue({
             el: "#box",
             data: {
-                phone: '',
+                phone: '18617273784',
                 password: '',
                 type: 'register',
                 code: '',
@@ -165,10 +163,10 @@
                 up: function () {
                     var data = {
                         'phone': this.phone,
-                        'passworde': this.passworde
+                        'password': this.password
                     };
                     if(this.type =='register') {
-                        if (!(this.code == this.vercode && this.vercode.length == 6)) {
+                        if (!(parseInt(this.code) == this.vercode && this.vercode != '')) {
                             alert('请输入正确的验证码');
                             return;
                         }
@@ -183,6 +181,7 @@
                         }
                         , success: function (msg) {
                             alert(msg.msg);
+                            msg.code == 200 && (location.href='/index.php/index');
                         }
                         , error: function (e) {
                             alert('服务器繁忙请稍后重试')

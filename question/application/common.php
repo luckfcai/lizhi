@@ -53,6 +53,8 @@ function getTree($data, $pid = 0)
  * 递归找子集
  * @param array 范围数组
  * @param int   需找子集的id
+ * @param int   层级
+ * @param bool  是否静态存值
  */
 function columnTree($data, $pid = 0, $level = 0 , $static=true)
 {

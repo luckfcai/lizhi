@@ -9,7 +9,7 @@ class Check extends Controller
 {
     public function handle($request, \Closure $next)
     {
-        !Session::has("userInfo") &&  $this->error('请先登录',URL.'/administrationLogin');
+        !Session::has("adminInfo") &&  $this->error('请先登录',URL.'/administrationLogin');
         return $next($request);
     }
 }

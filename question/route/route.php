@@ -33,8 +33,9 @@ Route::group('index', function () {
     Route::rule('delImg',           'index/column/delImg');                      //图片删除 
     Route::rule('columnDel',        'index/column/columnDel');                   //后台栏目删除
     Route::rule('columnedit',       'index/column/columnedit');                  //后台栏目修改
-
+    
     Route::rule('questionlist',     'index/question/index');                     //问答后台页面
+    
 
 })->middleware('Check');
 
