@@ -32,7 +32,6 @@ class Index extends Controller
      */
     public function login()
     {
-
         if (Request::has('data','post')) {
             switch(input('type')){
                 case 'login':
@@ -70,7 +69,7 @@ class Index extends Controller
     public function send()
     {
         if (Request::has('phone','post')) {
-            examine('user_info',input('data')) && result('',100,'该手机已经注册过了');
+            examine('user_info',['phone'=>input('data')]) && result('',100,'该手机已经注册过了');
             $code = rand(100000, 999999);
             $phone = input('phone');
             $result = send_sms($phone, $code);

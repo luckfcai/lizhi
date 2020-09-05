@@ -54,16 +54,12 @@
 								<span class="us_uer"></span>
 								<input name="logpass" class="text" v-model="password" style="color: #FFFFFF !important; position:absolute; z-index:100;"value="" type="password" placeholder="请输入密码">
                             </div>
-
-
                             <div class="input_outer validation" v-if="type=='register'">
 								<span class="us_uer"></span>
                                 <input name="logpass" class="text " v-model="code" style="color: #FFFFFF !important; position:absolute; z-index:100;width:140px"value="" type="password" placeholder="请输入6位数验证码"> 
-                                <div class="toValidation" @click="send()">发送验证码</div> 
+                                <div class="toValidation" @click="send()">{{btnText}}</div> 
                             </div>
-                           
-
-                            <div class="tosignIn" @click="cut()" v-if="type=='login'">没有账号？去注册</div>
+                            <div class="tosignIn" @click="cut()">{{type=='login' ? '没有账号？去注册' : '已有账号，去登陆'}}</div>
 							<div class="mb2"><a class="act-but submit"  style="color: #FFFFFF;" @click="up()">{{type=='register' ? '注册并登录' : '登录' }}</a></div>
 						</form>
 					</div>
@@ -74,9 +70,9 @@
             var box = new Vue({
             el: "#box",
             data: {
-                phone: '',
-                password: '',
-                type: 'login',
+                phone: '18617273784',
+                password: '123456',
+                type: 'register',
                 code: '',
                 vercode: '',
                 btnText: '获取验证码',
@@ -122,7 +118,7 @@
                         , url: '__URL__/send'
                         , dataType: "json"
                         , data: {
-                            'phone': this.phone,
+                            'phone': this.phone
                         }
                         , success: function (msg) {
                             alert(msg.msg);
